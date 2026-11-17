@@ -9,13 +9,6 @@
     location: "Hochschule Luzern Technik & Architektur"
 )
 
-/*
-    Pallet
-    #F6BD60
-    #F7EDE2
-    #84A59D
-    #F28482
-*/
 
 // abbreviations
 #show: abbr.show-rule

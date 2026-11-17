@@ -5,17 +5,13 @@
 
 = Software
 
+Die Software, mit dem Namen *pinpoint*, ist komplett in Python @ref_python geschrieben. 
+
+
 #figure(
     caption: "Software Flussdiagramm",
     image("../assets/software_flow.png", width: 30%)
 )
-
-
-
-
-
-Die Software wurde in Python geschrieben.
-
 
 
 

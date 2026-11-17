@@ -35,28 +35,49 @@ Wird ein Test welche als kritisch eingestuft unterbricht den Testdurchlauf sobal
 #pagebreak()
 
 == Testen der Kommunikation
-Damit die einzelnen funktionieren des IO-Bricks getestet werden können muss zuerst die Kommunikation über CANopen überprüft werden.
+Damit die einzelnen Funktionen des IO-Bricks getestet werden können, muss zuerst die Kommunikation über CANopen überprüft werden.
 
 === Konzept
 
+Von jedem Brick wird über @SDO ein Objekt gelesen. Antwortet der Brick, ist er am CAN-Bus erreichbar und die Kommunikation funktioniert.
+Der Test ist als kritisch eingestuft. Ohne funktionierende Kommunikation können alle nachfolgenden Tests nicht durchgeführt werden.
 
+#figure(
+    caption: "Ergebnisse des Kommunikationstests",
+    table(
+        columns: (auto, 1fr),
+        align: left,
+        table.header([*Ergebnis*], [*Bedeutung*]),
+        [`PASSED`], [Brick antwortet],
+        [`FAILED`], [Keine @SDO\-Antwort (Timeout oder Abbruch)],
+    )
+)
 
+#todo()[
+    Evtl. Zusätzliche überprüfung der SlotID dokumentieren
+]
 
 
 === Umsetzung
 
-Die Umsetzung ist relativ schlank. 
+Der Test ist in der Klasse ```py CommunicationTest``` umgesetzt. Für jeden Brick wird das Objekt `Device Type` gelesen. Der Wert selbst wird nicht ausgewertet, es zählt nur, ob eine Antwort kommt. Bleibt sie aus oder wird der Zugriff abgebrochen, wirft die CANopen-Bibliothek eine Exception und der Brick wird als fehlerhaft gemeldet.
 
-
+#figure(
+    kind: "Codeausschnitt",
+    supplement: [Codeausschnitt],
+    caption: "Prüfen der Kommunikation",
+    [
 ```python
 try:
     _ = brick.get_device_type()     
 except (SdoCommunicationError, SdoAbortedError) as e:
     result.add_fail(f"No SDO response: {e}", bricks=(brick,))
     continue
-
- result.add_pass(...)
+...
+result.add_pass(...)
 ```
+    ]
+)
 
 
 #pagebreak()
