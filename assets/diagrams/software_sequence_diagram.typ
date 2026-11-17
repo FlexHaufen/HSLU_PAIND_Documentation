@@ -1,4 +1,5 @@
 #import "@preview/chronos:0.2.1"
+#import "@local/stddoc:1.0.1"
 
 #let par-name(title, subtitle) = align(center)[
   *#title* \
@@ -7,16 +8,16 @@
 
 
 
-#let test_run_sequence_diagram = scale(80%, reflow: true)[
+#let diagram = scale(80%, reflow: true)[
     #chronos.diagram({
         import chronos: *
 
         _par("U", display-name: "User", shape: "actor", show-bottom: false)
-        _par("P",  display-name: par-name("Pinpoint", "app"), color: rgb("#FFDDD2"), show-bottom: false)
-        _par("TR", display-name: par-name("TestRunner", "core"), color: rgb("#FFE6CC"), show-bottom: false)
-        _par("T",  display-name: par-name("Tests", "Communication, Digital, Analog"), color: rgb("#FFE6CC"), show-bottom: false)
-        _par("IB", display-name: par-name("IoBrick", "hardware driver"), color: rgb("#FFDDD2"), show-bottom: false)
-        _par("IO", display-name: par-name("IO-Bricks", "tester + testee via CAN"), color: rgb("#83C5BE"), show-bottom: false)
+        _par("P",  display-name: par-name("Pinpoint", "app"), color: stddoc.white, show-bottom: false)
+        _par("TR", display-name: par-name("TestRunner", "core"), color: stddoc.teal, show-bottom: false)
+        _par("T",  display-name: par-name("Tests", "Communication, Digital, Analog"), color: stddoc.teal, show-bottom: false)
+        _par("IB", display-name: par-name("IoBrick", "hardware driver"), color: stddoc.cyan, show-bottom: false)
+        _par("IO", display-name: par-name("IO-Bricks", "tester + testee via CAN"), color: stddoc.denim, show-bottom: false)
 
         _seq("U", "P", comment: "start")
 

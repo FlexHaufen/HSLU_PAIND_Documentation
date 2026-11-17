@@ -21,10 +21,10 @@ Hierfür steht ein @EDS zur Verfügung. Zusätzlich besitzen die IO-Bricks eine 
 
 Die Prüfung der IO-Bricks soll durch eine unter Linux laufende Python-Anwendung automatisiert werden. Die Kommunikation zwischen Testsoftware und IO-Bricks erfolgt über einen CAN-zu-USB-Adapter.
 
-#figure(
-    caption: "Übersicht Testaufbau ",
-    image("/assets/overview.png", width: 80%)
-)
+#figure(caption: "Übersicht Testaufbau")[
+    #import "../assets/diagrams/overview_testsetup.typ": diagram
+    #diagram
+]
 
 Die Software wird dabei primär von Produktionsmitarbeiter verwendet. Die Benutzer verfügen über Erfahrung im Testen von Elektronik-PCBs, besitzen jedoch keine vertiefte Ausbildung in Elektronik oder Linux.
 

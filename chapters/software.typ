@@ -51,12 +51,10 @@ Der IO-Brick wird direkt über CAN angesteuert dazu steht ein @EDS\-File zur Ver
 
 Das unten dargestellte Sequenzdiagramm stellt den Ablauf der Software dar.
 
-
-#import "../assets/diagrams/software_sequence_diagram.typ": *
-#figure(
-    caption: [Sequenzdiagramm Software],
-    test_run_sequence_diagram
-)
+#figure(caption: "Sequenzdiagramm Software")[
+    #import "../assets/diagrams/software_sequence_diagram.typ": diagram
+    #diagram
+]
 
 
 #pagebreak()

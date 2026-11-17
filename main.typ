@@ -1,5 +1,5 @@
 #import "@preview/abbr:0.3.1"
-#import "@local/stddoc:1.0.0":*
+#import "@local/stddoc:1.0.1":*
 
 
 #show:stddoc-thesis.with(
