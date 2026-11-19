@@ -8,7 +8,7 @@
 
 
 
-#let diagram = scale(80%, reflow: true)[
+#let diagram = scale(80%,reflow: true)[
     #chronos.diagram({
         import chronos: *
 
@@ -19,22 +19,24 @@
         _par("IB", display-name: par-name("IoBrick", "hardware driver"), color: stddoc.cyan, show-bottom: false)
         _par("IO", display-name: par-name("IO-Bricks", "tester + testee via CAN"), color: stddoc.denim, show-bottom: false)
 
-        _seq("U", "P", comment: "start")
+        _seq("U", "P", comment: "start", enable-dst: true)
 
         _grp("loop", {
             _seq("U", "P", comment: "scan QR code")
-            _seq("P", "TR", comment: "run all tests")
+            _seq("P", "TR", comment: "run all tests", enable-dst: true)
 
             _grp("loop", desc: "for each test", {
-            _seq("TR", "T", comment: "run test")
-            _seq("T", "IB", comment: "drive / read IOs")
-            _seq("IB", "IO", comment: "CANopen SDO")
-            _seq("IO", "IB", comment: "levels / voltages", dashed: true)
-            _seq("T", "TR", comment: "pass / fail per brick", dashed: true)
+            _seq("TR", "T", comment: "run test", enable-dst: true)
+            _seq("T", "IB", comment: "drive / read IOs", enable-dst: true)
+            _seq("IB", "IO", comment: "CANopen SDO", enable-dst: true)
+            _seq("IO", "IB", comment: "SDO response", dashed: true, disable-src: true)
+            _seq("IB", "T", comment: "levels / voltages / IDs", dashed: true, disable-src: true)
+            _seq("T", "TR", comment: "pass / fail per brick", dashed: true, disable-src: true)
             })
 
-            _seq("TR", "P", comment: "test report", dashed: true)
+            _seq("TR", "P", comment: "test report", dashed: true, disable-src: true)
             _seq("P", "U", comment: "report per brick", dashed: true)
         })
+        _evt("P", "disable")
     })
 ]
