@@ -179,3 +179,21 @@ Die Prioritäten sind dabei von 1 bis 3 verteilt. Wobei Anforderungen mit Priori
 
 
 ]
+
+
+#pagebreak()
+
+
+
+== Use Case
+
+Der "Use Case" (Anwendungsfall) ist im unten gezeigten Diagramm abgebildet.
+
+
+Die software wird dabei vom Prüfer gestartet. Anschliessend wird der Barcode auf dem zu prüfenden IO-Brick gescannet, womit die einzelnen Tests gestartet werden.
+Die Resultate der Test werden anschliessend in Log-Dateien abgespeichert.
+
+#figure(caption: "Übersicht Testaufbau")[
+    #import "../assets/diagrams/usecase.typ": diagram
+    #diagram
+]
