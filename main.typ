@@ -16,8 +16,8 @@
 #abbr.config(style: it => text(it), space-char: sym.space)  // custom style
 
 // figure alignment
-#show figure: set align(left)
-#show figure.caption: set align(left)
+//#show figure: set align(left)
+//#show figure.caption: set align(left)
 
 // table formatting / coloring
 #set table(fill: (x, y) => if y == 0 { gray.lighten(50%) } else { none })

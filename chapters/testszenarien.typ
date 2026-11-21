@@ -498,63 +498,207 @@ Kurzschlüsse gegen GND oder gegen die Bankspannung werden mit diesem Test nicht
 
 == Testen der konfigurierbaren Pull-Up/Pull-Down-Widerstände
 
-//Ein Pull-Widerstand ist eine schwache, passive Quelle. Man testet ihn daher, indem man zwei Dinge prüft: Er zieht eine Leitung, die sonst von nichts getrieben wird, auf seinen Pegel, und er verliert gegen einen echten Treiber.
+=== Konzept
 
-#table(
-  columns: 3,
-  table.header(
-    [*Wer treibt die Leitung*],
-    [*Was passieren sollte*],
-    [*Was es beweist*],
-  ),
-  [Nur der Pull-Widerstand eines Bricks (alles andere hochohmig)],
-  [Leitung geht auf den Pull-Pegel],
-  [Der Widerstand ist vorhanden und zugeschaltet],
+Jeder IO des IO-Bricks besitzt einen zuschaltbaren Pull-Up- oder Pull-Down-Widerstand von #box[$10"k"Omega plus.minus 5%$] #todo[Toleranz überprüfen]. Geprüft wird, ob beide Widerstände vorhanden sind und die Werte in der Toleranz liegen.
 
-  [Pull-Up auf einem Brick, Pull-Down auf dem anderen],
-  [Leitung liegt auf einer mittleren Spannung (≈ V/2 bei gleichen Widerstandswerten)],
-  [Beide Widerstände sind vorhanden; ihr Verhältnis liegt in der Toleranz],
+Während des ganzen Tests treibt kein Brick. Alle IOs beider Bricks sind als Eingang konfiguriert, und die Leitung wird nur über die Pull-Widerstände auf einen Pegel gezogen. Die Spannung der Leitung wird mit dem analogen Eingang gemessen. Gemessen wird mit dem Tester #todo[mit beiden bricks messen] , da dieser ein bekannt funktionierender Brick ist.
 
-  [Ausgangstreiber gegen den entgegengesetzten Pull],
-  [Leitung bleibt auf dem getriebenen Pegel],
-  [Der Pull ist schwach, nicht kurzgeschlossen oder niederohmig],
+Die Abbildung unten zeigt die Messung an einem IO. Dabei werden immer zwei Pull-Widerstände entgegengesetzt geschaltet. Die beiden Widerstände bilden so einen Spannungsteiler, und die Leitung liegt bei etwa der halben Bankspannung. Fehlt einer der beiden Widerstände, zieht der andere die Leitung auf seine Schiene ($"GND"$ oder $V_"bank"$).
+
+#figure(
+    caption: "Testen der konfigurierbaren Pull-Up/Pull-Down-Widerstände - Konzept",
+    drawio(path("../assets/drawIO/tests.drawio"), page: "pull_up_down")
 )
 
-=== Testkonzept, pro IO
+#figure(
+    caption: "Konfigurationen der Pull-Widerstände",
+    table(
+        columns: (auto, auto, auto, 1fr),
+        align: left,
+        table.header([*Testee*], [*Tester*], [*Erwartet*], [*Zweck*]),
+        [`NONE`], [`PULL_UP`], [`HIGH`], [Referenz: Pull-Widerstände des Prüflings lassen sich abschalten],
+        [`NONE`], [`PULL_DOWN`], [`LOW`], [Referenz: Pull-Widerstände des Prüflings lassen sich abschalten],
+        [`PULL_UP`], [`PULL_DOWN`], [`MID`], [Pull-Up des Prüflings vorhanden und in der Toleranz],
+        [`PULL_DOWN`], [`PULL_UP`], [`MID`], [Pull-Down des Prüflings vorhanden und in der Toleranz],
+    )
+)
 
-*Schritt 0: Voraussetzungen.* Zuerst den bestehenden `DigitalIoLoopbackTest` ausführen. Der Pull-Test nutzt die Eingangspuffer als Messwerkzeug, daher müssen diese bereits als funktionsfähig bekannt sein.
+In den ersten beiden Konfigurationen ist der Pull-Widerstand des Prüflings ausgeschaltet. Die Leitung muss deshalb auf dem Pegel des Testers liegen. Bleibt ein Pull-Widerstand des Prüflings trotzdem eingeschaltet, entsteht ein Spannungsteiler und die Leitung liegt im Bereich `MID`.
 
-*Schritt 1: Jeder Pull einzeln (digital).*
-Ein fehlender Pull lässt die Leitung floaten, und eine floatende Leitung behält oft einfach ihre letzte Ladung. Ein naiver Test könnte daher zufällig den richtigen Pegel lesen. Um das zu vermeiden, wird die Leitung zuerst auf den _entgegengesetzten_ Pegel geladen:
+#pagebreak()
 
-+ Brick 2 treibt die Leitung LOW und schaltet dann zurück auf INPUT. Die Leitung ist jetzt LOW, aber floatend.
-+ Brick 1 aktiviert `PULL_UP`. Warten, bis sich die Leitung eingeschwungen hat, dann auf beiden Bricks lesen. Beide sollten HIGH lesen.
-+ Gespiegelt: auf HIGH laden, dann `PULL_DOWN`; beide sollten LOW lesen.
-+ Mit vertauschten Rollen wiederholen (Pull von Brick 2, geladen durch Brick 1).
+==== Spannungsbereiche
 
-Das ergibt vier Ergebnisse pro Brick, die sich mit einer Fehlertabelle wie bei deinem Loopback-Test klassifizieren lassen:
-- *Beide Leser falsch, nur wenn der Pull dieses Bricks aktiv ist:* Der Pull dieses Bricks ist defekt.
-- *Nur `PULL_UP` falsch oder nur `PULL_DOWN` falsch:* Eine Hälfte der Pull-Schaltung ist defekt.
-- *`PULL_UP` ergibt LOW und `PULL_DOWN` ergibt HIGH:* Das Enum-Mapping ist vertauscht. Das beantwortet auch das TODO in `io_brick.py:117` (`src/pinpoint/hardware/io_brick.py`).
-- *`NONE` funktioniert:* Das lässt sich nur indirekt prüfen. Wenn Schritt 2 des Spannungstests unten die erwarteten Werte liefert, ist die „unbenutzte“ Seite tatsächlich hochohmig.
+Die gemessene Spannung $V$ wird bei einer Bankspannung von $V_"bank" = 3.3"V"$ einem der folgenden Bereiche zugeordnet:
 
-*Schritt 2: Spannungsteiler-Test (analog, optional, aber aussagekräftig).*
-Pull-Up von Brick 1 und Pull-Down von Brick 2 einschalten, dann `get_io_voltage` auf beiden Bricks lesen.
-- Erwartet: $V = V_"bank" dot R_"down" / (R_"up" + R_"down")$, innerhalb einer Toleranz.
-- Etwa 0 V bedeutet, dass der Pull-Up fehlt. Etwa $V_"bank"$ bedeutet, dass der Pull-Down fehlt. Ein Wert dazwischen, aber außerhalb der Toleranz, bedeutet einen falschen Widerstandswert.
-- Danach umgekehrt durchführen (Brick 1 Pull-Down, Brick 2 Pull-Up).
-- Bonus: Bei zwei Bankspannungen wiederholen (z. B. 1,8 V und 3,3 V). Der Pull-Up hängt an der Bankversorgung, damit wird also auch geprüft, ob der Sollwert der Versorgung eingehalten wird.
+#figure(
+    caption: "Spannungsbereiche des Pull-Widerstandstests",
+    table(
+        columns: (auto, 1fr, auto),
+        align: left,
+        table.header([*Bereich*], [*Bedeutung*], [*Grenzen bei 3.3 V*]),
+        [`LOW`], [Leitung auf GND gezogen], [$0"V" ... 0.2"V"$],
+        [`MID`], [Spannungsteiler aus Pull-Up und Pull-Down], [$1.47"V" ... 1.83"V"$],
+        [`HIGH`], [Leitung auf die Bankspannung gezogen], [$3.1"V" ... 3.5"V"$],
+        [`OTHER`], [Keiner der obigen Bereiche], [_restliche Werte_],
+    )
+)
 
-*Schritt 3: Treiber gegen den entgegengesetzten Pull.*
-Brick 1 treibt LOW, während bei Brick 2 `PULL_UP` aktiv ist. Die Leitung muss LOW bleiben, sowohl digital als auch bei etwa 0 V. Danach HIGH gegen `PULL_DOWN`. Das erkennt einen gegen die Versorgungsschiene kurzgeschlossenen Pull und ist zugleich eine einfache Prüfung, wie stark der Ausgangstreiber ist.
+Für die Schienen `LOW` und `HIGH` wird eine Abweichung von $plus.minus 0.2"V"$ zugelassen. Ein einzelner Pull-Up misst bei $3.3"V"$ nur rund $3.17"V"$ bis $3.24"V"$, da der @ADC den $10"k"Omega$-Widerstand belastet.
 
-=== Nebeneffekt: ein besserer Loopback-Test
-Mit verfügbaren Pulls wird dein bestehender Test zuverlässiger:
-- *Offene Leitung:* Derzeit floatet der empfangende Eingang, sodass `Fault.OPEN` zufällig übersehen werden kann. Wenn der Empfänger den zum getriebenen Pegel entgegengesetzten Pull nutzt (HIGH treiben → Empfänger `PULL_DOWN`), liest eine offene Leitung zuverlässig den falschen Wert.
-- *Kurzschlüsse zwischen IOs (Bridging):* Alle IOs nach unten ziehen, einen HIGH treiben und prüfen, ob seine Nachbarn LOW bleiben. Ohne Pulls lässt sich das gar nicht erkennen, weil die Nachbarn floaten.
+Für den Bereich `MID` wird die Toleranz der Widerstände berücksichtigt. Im ungünstigsten Fall liegt ein Widerstand an der unteren und der andere an der oberen Toleranzgrenze:
 
-=== Pendenzen Implementierung
-+ *Nennwert und Toleranz der Pull-Widerstände.* Wird für die Grenzwerte des Spannungsteilers benötigt (z. B. 10 kΩ ±5 %).
-+ *Wo `Voltage Read` misst.* Sitzt der ADC direkt am Pin oder hinter einem Pegelwandler oder Serienwiderstand? Im zweiten Fall ändert sich die Teilerrechnung.
-+ *Ist der Pull noch aktiv, wenn der IO auf OUTPUT steht?* Das betrifft Schritt 3 und die Frage, ob der Pull abgeschaltet werden muss, bevor der Brick treibt.
-+ *`Impedance Read` liefert NaN.* Falls sich das zum Laufen bringen lässt (evtl. braucht es einen Modus oder einen Messstrom), könnte man damit den Pull-Widerstand direkt messen.
+$
+  V_"MID" = V_"bank" dot R_"down" / (R_"up" + R_"down"), quad
+  (1 - 0.05) / 2 dot V_"bank" <= V_"MID" <= (1 + 0.05) / 2 dot V_"bank"
+$
+
+Zusätzlich wird eine Messtoleranz des @ADC von $plus.minus 0.1"V"$ zugelassen. Daraus ergibt sich der Bereich von $1.47"V"$ bis $1.83"V"$.
+
+==== Fehlerinterpretation
+
+Aus der Konfiguration und dem gemessenen Bereich lässt sich der Fehler bestimmen und einem Brick zuordnen.
+
+#figure(
+    caption: "Fehlerinterpretation Pull-Widerstände",
+    table(
+        columns: (auto, auto, auto, 1fr, auto),
+        align: left,
+        table.header([*Prüfling*], [*Tester*], [*Gemessen*], [*Fehler*], [*Brick*]),
+        [`NONE`], [`PULL_UP`], [`MID`], [Pull-Down des Prüflings bleibt eingeschaltet], [Prüfling],
+        [`NONE`], [`PULL_UP`], [`LOW`], [Pull-Up des Testers defekt], [Tester],
+        [`NONE`], [`PULL_DOWN`], [`MID`], [Pull-Up des Prüflings bleibt eingeschaltet], [Prüfling],
+        [`PULL_UP`], [`PULL_DOWN`], [`LOW`], [Pull-Up des Prüflings fehlt], [Prüfling],
+        [`PULL_UP`], [`PULL_DOWN`], [`HIGH`], [Pull-Down des Testers fehlt], [Tester],
+        [`PULL_UP`], [`PULL_DOWN`], [`OTHER`], [Widerstandswert ausserhalb der Toleranz], [Beide],
+        [`PULL_DOWN`], [`PULL_UP`], [`HIGH`], [Pull-Down des Prüflings fehlt], [Prüfling],
+        [`PULL_DOWN`], [`PULL_UP`], [`LOW`], [Pull-Up des Testers fehlt], [Tester],
+        [`PULL_DOWN`], [`PULL_UP`], [`OTHER`], [Widerstandswert ausserhalb der Toleranz], [Beide],
+        table.cell(colspan: 3)[_Restliche Kombinationen_], [Unklassifizierbarer Fehler], [Beide],
+    )
+)
+
+*Widerstandswert ausserhalb der Toleranz*: Gemessen wird nur das Verhältnis der beiden Widerstände. Ein falscher Wert lässt sich daher nicht eindeutig einem der beiden Bricks zuordnen.
+
+*Fehler des Testers*: Der Tester gilt zwar als bekannt funktionierend, seine Pull-Widerstände werden aber trotzdem mitgeprüft. Fehlt ein Pull-Widerstand des Testers, würde sonst der Prüfling fälschlicherweise als fehlerhaft gemeldet.
+
+
+#pagebreak()
+
+
+=== Umsetzung
+
+Der Test ist in der Klasse ```py PullResistorTest``` umgesetzt. Er ist nicht als kritisch eingestuft. Ein fehlerhafter Pull-Widerstand wird im Bericht aufgeführt, die nachfolgenden Tests werden aber trotzdem ausgeführt. Der Test setzt voraus, dass der digitale Loopback-Test bestanden wurde. Leitungen, die unterbrochen sind oder fest auf einem Pegel hängen, sind damit bereits ausgeschlossen.
+
+==== Vorbereitung und Abschluss
+
+In der Vorbereitung (```py setup()```) wird auf beiden Bricks die Bankspannung auf 3.3 V gesetzt und alle IOs als Eingang konfiguriert. Anschliessend wird gewartet, bis sich die Bankspannung eingeschwungen hat (`BANK_VOLTAGE_SETTLE_TIME`). Im Abschluss (```py teardown()```) werden die Pull-Widerstände aller IOs beider Bricks wieder ausgeschaltet.
+
+==== Konfigurationen und Fehlertabelle
+
+Die Konfigurationen und die Fehlertabelle sind direkt als Tabellen im Code abgebildet. Jede Konfiguration ordnet dem Paar aus Pull-Widerstand des Prüflings und des Testers den erwarteten Bereich zu. Die Fehlertabelle ordnet jeder abweichenden Messung einen Fehler und den betroffenen Brick zu.
+
+#figure(
+    kind: "Codeausschnitt",
+    supplement: [Codeausschnitt],
+    caption: "Konfigurationen und Fehlertabelle (gekürzt)",
+    [
+```python
+# (testee pull, tester pull) -> expected zone
+CONFIGS = {
+    (P.NONE, P.PULL_UP):        Zone.HIGH,
+    (P.NONE, P.PULL_DOWN):      Zone.LOW,
+    (P.PULL_UP, P.PULL_DOWN):   Zone.MID,
+    (P.PULL_DOWN, P.PULL_UP):   Zone.MID,
+}
+
+# (testee pull, tester pull, measured zone) -> (fault, faulty brick)
+FAULT_TABLE = {
+    (P.NONE, P.PULL_UP, Zone.MID):      ("Pull-down of testee stuck enabled", TESTEE),
+    (P.PULL_UP, P.PULL_DOWN, Zone.LOW): ("Pull-up of testee missing", TESTEE),
+    ...
+}
+```
+    ]
+)
+
+==== Zuordnung der Spannung
+
+Die gemessene Spannung wird in der Methode ```py __zone()``` einem Bereich zugeordnet. Die Grenzen werden aus den Konstanten `RAIL_TOLERANCE`, `VOLTAGE_TOLERANCE` und `PULL_RESISTANCE_TOLERANCE` berechnet.
+
+#figure(
+    kind: "Codeausschnitt",
+    supplement: [Codeausschnitt],
+    caption: "Zuordnung der gemessenen Spannung zu einem Bereich",
+    [
+```python
+DIVIDER_RATIO_MIN = (1 - PULL_RESISTANCE_TOLERANCE) / 2
+DIVIDER_RATIO_MAX = (1 + PULL_RESISTANCE_TOLERANCE) / 2
+
+def __zone(voltage, bank_voltage):
+    if abs(voltage) <= RAIL_TOLERANCE:
+        return Zone.LOW
+    if abs(voltage - bank_voltage) <= RAIL_TOLERANCE:
+        return Zone.HIGH
+    if (DIVIDER_RATIO_MIN * bank_voltage - VOLTAGE_TOLERANCE
+            <= voltage <=
+            DIVIDER_RATIO_MAX * bank_voltage + VOLTAGE_TOLERANCE):
+        return Zone.MID
+    return Zone.OTHER
+```
+    ]
+)
+
+==== Messung und Auswertung
+
+Für jede Konfiguration werden die Pull-Widerstände auf allen IOs beider Bricks gleichzeitig gesetzt. Nach der Wartezeit `IO_SETTLE_TIME` misst der Tester die Spannung jedes IOs. Weicht der gemessene Bereich vom erwarteten ab, wird der Fehler in der Fehlertabelle nachgeschlagen. Kombinationen, die nicht in der Tabelle enthalten sind, werden als unklassifizierbar gemeldet und beiden Bricks zugeordnet.
+
+#figure(
+    kind: "Codeausschnitt",
+    supplement: [Codeausschnitt],
+    caption: "Messung und Auswertung der Pull-Widerstände",
+    [
+```python
+for (testee_pull, tester_pull), expected_zone in CONFIGS.items():
+    testee.set_pull_resistor(testee_pull)
+    tester.set_pull_resistor(tester_pull)
+    time.sleep(IoBrick.IO_SETTLE_TIME)
+
+    for bank, io in IoBrick.all_ios():
+        voltage = tester.get_io_voltage(bank, io)
+        zone = self.__zone(voltage, bank_voltage)
+        if zone == expected_zone:
+            result.add_pass(...)
+            continue
+        fault, faulty = FAULT_TABLE.get(
+            (testee_pull, tester_pull, zone),
+            ("Unclassifiable fault, further diagnosis required", BOTH),
+        )
+        result.add_fail(...)
+```
+    ]
+)
+
+Pro IO werden vier Konfigurationen geprüft, insgesamt also $4 dot 32 = 128$ Messungen. Im Bericht wird für jede Messung neben dem Ergebnis auch der erwartete Spannungsbereich und die gemessene Spannung ausgegeben.
+
+#figure(
+    caption: "Ergebnisse des Pull-Widerstandstests",
+    table(
+        columns: (auto, 1fr, auto),
+        align: left,
+        table.header([*Ergebnis*], [*Bedeutung*], [*Betroffener Brick*]),
+        [`PASSED`], [Gemessene Spannung liegt im erwarteten Bereich], [-],
+        [`FAILED`], [Fehler gemäss Fehlertabelle], [Prüfling, Tester oder beide],
+        [`FAILED`], [Unklassifizierbarer Fehler, weitere Diagnose nötig], [Beide],
+    )
+)
+
+
+==== Einschränkungen
+
+Der Wert der Widerstände wird nicht absolut gemessen, sondern nur das Verhältnis von Pull-Up zu Pull-Down. Weichen beide Widerstände in die gleiche Richtung ab, bleibt das Verhältnis gleich und der Fehler wird nicht erkannt.
+
+Geprüft wird nur bei einer Bankspannung von $3.3"V"$. Ob die Pull-Widerstände auch bei anderen Bankspannungen korrekt arbeiten, wird nicht geprüft.
+
+Der vorangehende Walking-One-Test ist auf funktionierende Pull-Down-Widerstände angewiesen. Meldet der Walking-One-Test einen Kurzschluss und dieser Test gleichzeitig einen fehlenden Pull-Down am selben IO, ist der gemeldete Kurzschluss vermutlich eine Folge des fehlenden Pull-Downs.
