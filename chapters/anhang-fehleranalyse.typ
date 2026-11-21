@@ -13,9 +13,9 @@
 
 = Fehleranalyse IO-Brick <anhang-fehleranalyse>
 
-Die folgende Tabelle mögliche Fehler auf, die bei der Produktion eines IO-Bricks auftreten können, und ordnet jedem Fehler eine Testmethode zu.
+Die folgende Tabelle listet mögliche Fehler auf, die bei der Produktion eines IO-Bricks auftreten können, und ordnet jedem Fehler eine Testmethode zu.
 
-Status: #ok (Test implementiert), #plan (Work In Progress), #open = (Test nicht implementiert).
+Status: #ok (Test implementiert), #plan (Work In Progress), #open (Test nicht implementiert).
 
 #show figure.where(kind: table): set block(breakable: true)
 #figure(
@@ -55,8 +55,8 @@ Status: #ok (Test implementiert), #plan (Work In Progress), #open = (Test nicht 
         [B2], [Identität],
         [Seriennummer nicht programmiert],
         [Dateiname des Logs ungültig],
-        [Kommunikationstest],
-        [#plan],
+        [Kommunikationstest (Seriennummer und Produktcode prüfen, noch nicht umgesetzt)],
+        [#open],
 
         // ---------------------------------------------------------------
         group[C: Bankspannung (2x)],
@@ -64,8 +64,8 @@ Status: #ok (Test implementiert), #plan (Work In Progress), #open = (Test nicht 
         [C1], [V#sub[Bank]],
         [Kurzschluss / Überlast],
         [Ganze Bank ohne Funktion],
-        [Gruppenauswertung: alle 16 IOs einer Bank fehlerhaft → Fehler der Bank],
-        [#open],
+        [Analoger Loopback-Test: Gruppenauswertung, alle 16 IOs einer Bank mit falscher Spannung (Readback und Remote) → Fehler der Bankversorgung],
+        [#ok],
 
         // ---------------------------------------------------------------
         group[D: Signalpfad pro IO (32x)],
@@ -91,7 +91,7 @@ Status: #ok (Test implementiert), #plan (Work In Progress), #open = (Test nicht 
         [D4], [Lötstelle Pegelwandler - Steckerkontakt],
         [Unterbruch],
         [Leitung unterbrochen],
-        [Loopback; zuverlässig nur mit *entgegengesetztem Pull beim Empfänger*, sonst behält die floatende Leitung ihren letzten Pegel (*analog readback implementieren*)],
+        [Digitaler Loopback: nicht zuverlässig, die floatende Leitung behält ihren letzten Pegel (*entgegengesetzter Pull beim Empfänger* noch nicht umgesetzt). Analoger Loopback: Unterbruch wird erkannt (Remote-Spannung falsch), aber als defekter analoger Eingang beider Bricks gemeldet],
         [#plan],
 
         [D5], [Pin-Knoten],
@@ -106,12 +106,6 @@ Status: #ok (Test implementiert), #plan (Work In Progress), #open = (Test nicht 
         [Walking One (alle 32 IOs lesen)],
         [#ok],
 
-        [D7], [Layout, Bestückung, Firmware-Mapping],
-        [IOs vertauscht],
-        [Falscher IO reagiert],
-        [Walking One: IO n wird getrieben, beim Gegenüber reagiert IO m → "vertauscht"],
-        [#plan],
-
 
         // ---------------------------------------------------------------
         group[E: Pull-Widerstand pro IO (10k + IO-Expander)],
@@ -119,20 +113,20 @@ Status: #ok (Test implementiert), #plan (Work In Progress), #open = (Test nicht 
         [E1], [10k-Widerstand],
         [Fehlt / Unterbruch],
         [Kein Pull],
-        [Pull-Test Schritt 1 (Leitung vorher auf den entgegengesetzten Pegel laden)],
-        [#plan],
+        [Pull-Widerstandstest: Pull des Prüflings gegen entgegengesetzten Pull des Testers, fehlender Widerstand → Leitung auf Schiene statt V#sub[Bank]/2],
+        [#ok],
 
         [E2], [10k-Widerstand],
         [Falscher Wert (z. B. 1k oder 100k)],
         [Spannungsteiler stimmt nicht],
-        [Spannungsteiler-Test: Prüfling PU, Referenz PD → erwartet V#sub[Bank]/2 ± Toleranz],
-        [#plan],
+        [Pull-Widerstandstest: Prüfling PU / Tester PD und umgekehrt → erwartet V#sub[Bank]/2 ± Toleranz (nur bei 3.3 V)],
+        [#ok],
 
         [E3], [Expander-Pin],
         [Hängt fest auf HIGH/LOW],
         [Pull immer aktiv],
-        [*Zustand NONE testen:* Referenz PU, Prüfling NONE → erwartet ≈ V#sub[Bank] (nicht V#sub[Bank]/2)],
-        [#open],
+        [Pull-Widerstandstest, Referenzkonfigurationen: Prüfling NONE / Tester PU → erwartet ≈ V#sub[Bank], Prüfling NONE / Tester PD → erwartet ≈ 0 V (nicht V#sub[Bank]/2)],
+        [#ok],
 
         // ---------------------------------------------------------------
         group[F: ADC pro IO],
@@ -140,19 +134,19 @@ Status: #ok (Test implementiert), #plan (Work In Progress), #open = (Test nicht 
         [F1], [Leiterbahn ADC → MCU],
         [Unterbruch],
         [Messwert 0 V / zufällig],
-        [Referenz-Brick treibt LOW/HIGH, der ADC des Prüflings muss folgen],
-        [#open],
+        [Analoger Loopback-Test: Tester treibt HIGH/LOW, der ADC des Prüflings muss folgen (Remote-Messung)],
+        [#ok],
 
         [F2], [Referenz / Spannungsteiler],
         [Verstärkungs- oder Offsetfehler],
         [Messwerte um einen Faktor falsch],
-        [3 Messpunkte: 0 V, V#sub[Bank]/2 (Pull-Teiler), V#sub[Bank]; Vergleich mit dem ADC des Referenz-Bricks],
-        [#open],
+        [Analoger Loopback-Test: Messpunkte 0 V und V#sub[Bank] bei 1.0 V, 2.0 V und 3.3 V, absoluter Vergleich (±0.1 V) und Vergleich mit dem ADC des Testers],
+        [#ok],
 
         [F3], [ADC-Mapping],
         [Kanäle vertauscht],
         [Falscher Kanal reagiert],
-        [Analoge Messung parallel zu D8 auswerten],
+        [Analoge Messung parallel zu D7 auswerten. Aktuell fällt ein vertauschter Kanal im analogen Loopback-Test als defekter analoger Eingang auf, wird aber nicht als "vertauscht" klassifiziert],
         [#open]
     )
 )
