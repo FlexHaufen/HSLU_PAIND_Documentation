@@ -1,6 +1,6 @@
 
 #import "@preview/oasis-align:0.4.1": oasis-align
-
+#import "@preview/dio:0.2.0": drawio
 
 = Übersicht der Hardware
 
@@ -15,7 +15,7 @@
     ),
     figure(
         caption: "IO-Brick Blockschaltbild",
-        image("../assets/io-brick-blockschaltbild.png")
+        drawio(path("../assets/drawIO/io-brick.drawio"), page: "diagram"),
     )
 )
 
@@ -28,7 +28,7 @@ Das Blockschaltbild eines einzelnen IOs sieht dabei wie folgt aus:
 
 #figure(
     caption: "IO-Brick Blockschaltbild IO",
-    image("/assets/io-brick-blockschaltbild_io.png", width: 80%)
+    drawio(path("../assets/drawIO/io-brick.drawio"), page: "diagram_io"),
 )
 
 
@@ -48,7 +48,7 @@ Auf dieser können zwei IO-Bricks auf die PCIEx4 Stecker aufgesteckt werden und 
     ),
     figure(
         caption: "IO Selftest BP Blockschaltbild",
-        image("../assets/io-selftest-bp.png")
+        drawio(path("../assets/drawIO/io-selftest-bp.drawio"), page: "diagram", width: 100%),
     )
 )
 

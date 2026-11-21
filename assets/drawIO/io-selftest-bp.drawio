@@ -1,0 +1,212 @@
+<mxfile host="65bd71144e">
+    <diagram name="diagram" id="mLM9Jd2FUK1UMzAFZOO6">
+        <mxGraphModel dx="32" dy="783" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="1" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="Al2TtpsFazMwgK6BY-ib-63" parent="1" style="rounded=1;whiteSpace=wrap;html=1;roundedPerimeter=1;dashed=1;fillColor=none;arcSize=3;connectable=0;" value="" vertex="1">
+                    <mxGeometry height="360" width="510" x="965" y="83" as="geometry"/>
+                </mxCell>
+                <mxCell id="Al2TtpsFazMwgK6BY-ib-43" edge="1" parent="1" source="Al2TtpsFazMwgK6BY-ib-1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;defaultLabelBackgroundColor=page;endArrow=block;endFill=0;">
+                    <mxGeometry relative="1" x="0.9" as="geometry">
+                        <mxPoint x="1034.99" y="123" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="Al2TtpsFazMwgK6BY-ib-45" connectable="0" parent="Al2TtpsFazMwgK6BY-ib-43" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];inheritText=1;defaultLabelBackgroundColor=page;" value="+12V" vertex="1">
+                    <mxGeometry relative="1" x="0.5926" as="geometry">
+                        <mxPoint y="-14" as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="Al2TtpsFazMwgK6BY-ib-53" edge="1" parent="1" source="Al2TtpsFazMwgK6BY-ib-1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;defaultLabelBackgroundColor=page;endArrow=none;endFill=0;">
+                    <mxGeometry relative="1" x="-0.8889" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="1035" y="423"/>
+                        </Array>
+                        <mxPoint x="1355" y="423" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="Al2TtpsFazMwgK6BY-ib-1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;" value="IO-Brick 10" vertex="1">
+                    <mxGeometry height="240" width="120" x="975" y="143" as="geometry"/>
+                </mxCell>
+                <mxCell id="Al2TtpsFazMwgK6BY-ib-44" edge="1" parent="1" source="Al2TtpsFazMwgK6BY-ib-2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;defaultLabelBackgroundColor=page;endArrow=block;endFill=0;">
+                    <mxGeometry relative="1" x="0.98" as="geometry">
+                        <mxPoint x="1355" y="123" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="Al2TtpsFazMwgK6BY-ib-47" connectable="0" parent="Al2TtpsFazMwgK6BY-ib-44" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];inheritText=1;defaultLabelBackgroundColor=page;" value="+12V" vertex="1">
+                    <mxGeometry relative="1" x="0.98" as="geometry">
+                        <mxPoint y="-10" as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="Al2TtpsFazMwgK6BY-ib-2" parent="1" style="rounded=1;whiteSpace=wrap;html=1;" value="IO-Brick 11" vertex="1">
+                    <mxGeometry height="240" width="120" x="1295" y="143" as="geometry"/>
+                </mxCell>
+                <mxCell id="Al2TtpsFazMwgK6BY-ib-11" edge="1" parent="1" style="endArrow=oval;html=1;rounded=0;defaultLabelBackgroundColor=page;endFill=0;startSize=4;endSize=4;" value="">
+                    <mxGeometry height="50" relative="1" width="50" as="geometry">
+                        <mxPoint x="1095" y="223" as="sourcePoint"/>
+                        <mxPoint x="1185" y="223" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="Al2TtpsFazMwgK6BY-ib-21" connectable="0" parent="Al2TtpsFazMwgK6BY-ib-11" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];inheritText=1;defaultLabelBackgroundColor=page;" value="A0" vertex="1">
+                    <mxGeometry relative="1" x="-0.7185" y="1" as="geometry">
+                        <mxPoint x="-3" y="-9" as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="Al2TtpsFazMwgK6BY-ib-12" edge="1" parent="1" style="endArrow=oval;html=1;rounded=0;defaultLabelBackgroundColor=page;endFill=0;startSize=4;endSize=4;" value="">
+                    <mxGeometry height="50" relative="1" width="50" as="geometry">
+                        <mxPoint x="1295" y="223" as="sourcePoint"/>
+                        <mxPoint x="1205" y="223" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="Al2TtpsFazMwgK6BY-ib-23" connectable="0" parent="Al2TtpsFazMwgK6BY-ib-12" style="edgeLabel;html=1;align=left;verticalAlign=middle;resizable=0;points=[];inheritText=1;defaultLabelBackgroundColor=page;" value="A0" vertex="1">
+                    <mxGeometry relative="1" x="-0.6889" y="-1" as="geometry">
+                        <mxPoint x="-6" y="-9" as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="Al2TtpsFazMwgK6BY-ib-16" edge="1" parent="1" style="endArrow=oval;html=1;rounded=0;defaultLabelBackgroundColor=page;endFill=0;startSize=4;endSize=4;" value="">
+                    <mxGeometry height="50" relative="1" width="50" as="geometry">
+                        <mxPoint x="1095" y="243" as="sourcePoint"/>
+                        <mxPoint x="1185" y="243" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="Al2TtpsFazMwgK6BY-ib-22" connectable="0" parent="Al2TtpsFazMwgK6BY-ib-16" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];inheritText=1;defaultLabelBackgroundColor=page;" value="A1" vertex="1">
+                    <mxGeometry relative="1" x="-0.4444" as="geometry">
+                        <mxPoint x="-15" y="-10" as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="Al2TtpsFazMwgK6BY-ib-17" edge="1" parent="1" style="endArrow=oval;html=1;rounded=0;defaultLabelBackgroundColor=page;endFill=0;startSize=4;endSize=4;" value="">
+                    <mxGeometry height="50" relative="1" width="50" as="geometry">
+                        <mxPoint x="1295" y="243" as="sourcePoint"/>
+                        <mxPoint x="1205" y="243" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="Al2TtpsFazMwgK6BY-ib-25" connectable="0" parent="Al2TtpsFazMwgK6BY-ib-17" style="edgeLabel;html=1;align=left;verticalAlign=middle;resizable=0;points=[];inheritText=1;defaultLabelBackgroundColor=page;" value="A1" vertex="1">
+                    <mxGeometry relative="1" x="-0.6519" as="geometry">
+                        <mxPoint x="-4" y="-10" as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="Al2TtpsFazMwgK6BY-ib-18" edge="1" parent="1" style="endArrow=oval;html=1;rounded=0;defaultLabelBackgroundColor=page;endFill=0;startSize=4;endSize=4;" value="">
+                    <mxGeometry height="50" relative="1" width="50" as="geometry">
+                        <mxPoint x="1095" y="303" as="sourcePoint"/>
+                        <mxPoint x="1185" y="303" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="Al2TtpsFazMwgK6BY-ib-26" connectable="0" parent="Al2TtpsFazMwgK6BY-ib-18" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];inheritText=1;defaultLabelBackgroundColor=page;" value="B15" vertex="1">
+                    <mxGeometry relative="1" x="-0.8" y="-1" as="geometry">
+                        <mxPoint x="1" y="-11" as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="Al2TtpsFazMwgK6BY-ib-19" edge="1" parent="1" style="endArrow=oval;html=1;rounded=0;defaultLabelBackgroundColor=page;endFill=0;startSize=4;endSize=4;" value="">
+                    <mxGeometry height="50" relative="1" width="50" as="geometry">
+                        <mxPoint x="1295" y="303" as="sourcePoint"/>
+                        <mxPoint x="1205" y="303" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="Al2TtpsFazMwgK6BY-ib-27" connectable="0" parent="Al2TtpsFazMwgK6BY-ib-19" style="edgeLabel;html=1;align=left;verticalAlign=middle;resizable=0;points=[];inheritText=1;defaultLabelBackgroundColor=page;" value="B15" vertex="1">
+                    <mxGeometry relative="1" x="-0.4175" y="-1" as="geometry">
+                        <mxPoint x="-4" y="-9" as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="Al2TtpsFazMwgK6BY-ib-28" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="&lt;font style=&quot;font-size: 11px;&quot;&gt;...&lt;/font&gt;" vertex="1">
+                    <mxGeometry height="10" width="20" x="1095" y="263" as="geometry"/>
+                </mxCell>
+                <mxCell id="Al2TtpsFazMwgK6BY-ib-29" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="&lt;font style=&quot;font-size: 11px;&quot;&gt;...&lt;/font&gt;" vertex="1">
+                    <mxGeometry height="10" width="20" x="1275" y="263" as="geometry"/>
+                </mxCell>
+                <mxCell id="Al2TtpsFazMwgK6BY-ib-33" edge="1" parent="1" style="endArrow=none;html=1;rounded=0;defaultLabelBackgroundColor=page;" value="">
+                    <mxGeometry height="50" relative="1" width="50" as="geometry">
+                        <mxPoint x="1185" y="223" as="sourcePoint"/>
+                        <mxPoint x="1185" y="213" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="Al2TtpsFazMwgK6BY-ib-34" edge="1" parent="1" style="endArrow=none;html=1;rounded=0;defaultLabelBackgroundColor=page;" value="">
+                    <mxGeometry height="50" relative="1" width="50" as="geometry">
+                        <mxPoint x="1205" y="213" as="sourcePoint"/>
+                        <mxPoint x="1185" y="213" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="Al2TtpsFazMwgK6BY-ib-35" edge="1" parent="1" style="endArrow=none;html=1;rounded=0;defaultLabelBackgroundColor=page;" value="">
+                    <mxGeometry height="50" relative="1" width="50" as="geometry">
+                        <mxPoint x="1205" y="223" as="sourcePoint"/>
+                        <mxPoint x="1205" y="213" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="Al2TtpsFazMwgK6BY-ib-37" edge="1" parent="1" style="endArrow=none;html=1;rounded=0;defaultLabelBackgroundColor=page;" value="">
+                    <mxGeometry height="50" relative="1" width="50" as="geometry">
+                        <mxPoint x="1185" y="243" as="sourcePoint"/>
+                        <mxPoint x="1185" y="233" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="Al2TtpsFazMwgK6BY-ib-38" edge="1" parent="1" style="endArrow=none;html=1;rounded=0;defaultLabelBackgroundColor=page;" value="">
+                    <mxGeometry height="50" relative="1" width="50" as="geometry">
+                        <mxPoint x="1205" y="233" as="sourcePoint"/>
+                        <mxPoint x="1185" y="233" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="Al2TtpsFazMwgK6BY-ib-39" edge="1" parent="1" style="endArrow=none;html=1;rounded=0;defaultLabelBackgroundColor=page;" value="">
+                    <mxGeometry height="50" relative="1" width="50" as="geometry">
+                        <mxPoint x="1205" y="243" as="sourcePoint"/>
+                        <mxPoint x="1205" y="233" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="Al2TtpsFazMwgK6BY-ib-40" edge="1" parent="1" style="endArrow=none;html=1;rounded=0;defaultLabelBackgroundColor=page;" value="">
+                    <mxGeometry height="50" relative="1" width="50" as="geometry">
+                        <mxPoint x="1185" y="303" as="sourcePoint"/>
+                        <mxPoint x="1185" y="293" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="Al2TtpsFazMwgK6BY-ib-41" edge="1" parent="1" style="endArrow=none;html=1;rounded=0;defaultLabelBackgroundColor=page;" value="">
+                    <mxGeometry height="50" relative="1" width="50" as="geometry">
+                        <mxPoint x="1205" y="293" as="sourcePoint"/>
+                        <mxPoint x="1185" y="293" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="Al2TtpsFazMwgK6BY-ib-42" edge="1" parent="1" style="endArrow=none;html=1;rounded=0;defaultLabelBackgroundColor=page;" value="">
+                    <mxGeometry height="50" relative="1" width="50" as="geometry">
+                        <mxPoint x="1205" y="303" as="sourcePoint"/>
+                        <mxPoint x="1205" y="293" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="Al2TtpsFazMwgK6BY-ib-55" edge="1" parent="1" source="Al2TtpsFazMwgK6BY-ib-2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;defaultLabelBackgroundColor=page;endArrow=none;endFill=0;">
+                    <mxGeometry relative="1" x="-0.7895" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="1355" y="423"/>
+                        </Array>
+                        <mxPoint x="1355" y="383" as="sourcePoint"/>
+                        <mxPoint x="1505" y="423" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="Al2TtpsFazMwgK6BY-ib-56" connectable="0" parent="Al2TtpsFazMwgK6BY-ib-55" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];inheritText=1;defaultLabelBackgroundColor=page;" value="CAN" vertex="1">
+                    <mxGeometry relative="1" x="-0.0947" y="-1" as="geometry">
+                        <mxPoint x="104" y="-11" as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="Al2TtpsFazMwgK6BY-ib-57" parent="1" style="ellipse;whiteSpace=wrap;html=1;shapeInside=1;aspect=fixed;fillColor=#000000;" value="" vertex="1">
+                    <mxGeometry height="5" width="5" x="1352.5" y="420" as="geometry"/>
+                </mxCell>
+                <mxCell id="Al2TtpsFazMwgK6BY-ib-60" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;defaultLabelBackgroundColor=page;endArrow=block;endFill=0;">
+                    <mxGeometry relative="1" x="-0.0222" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="1435" y="143"/>
+                        </Array>
+                        <mxPoint x="1505" y="143" as="sourcePoint"/>
+                        <mxPoint x="1435" y="123" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="Al2TtpsFazMwgK6BY-ib-61" connectable="0" parent="Al2TtpsFazMwgK6BY-ib-60" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];inheritText=1;defaultLabelBackgroundColor=page;" value="+12V" vertex="1">
+                    <mxGeometry relative="1" x="-0.0222" as="geometry">
+                        <mxPoint x="-26" y="-30" as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="Al2TtpsFazMwgK6BY-ib-62" connectable="0" parent="Al2TtpsFazMwgK6BY-ib-60" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];inheritText=1;defaultLabelBackgroundColor=page;" value="Power" vertex="1">
+                    <mxGeometry relative="1" x="-0.5333" y="1" as="geometry">
+                        <mxPoint x="21" y="-11" as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="Al2TtpsFazMwgK6BY-ib-64" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="IO Selftest BP" vertex="1">
+                    <mxGeometry height="30" width="100" x="960" y="80" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>

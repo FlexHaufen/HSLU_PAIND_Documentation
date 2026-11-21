@@ -1,4 +1,6 @@
+#import "@preview/dio:0.2.0": drawio
 #import "@preview/dashy-todo:0.1.3": todo
+
 
 = Testszenarien
 
@@ -98,7 +100,7 @@ Während ein Brick treibt, ist der IO des anderen Bricks immer als Eingang konfi
 
 #figure(
     caption: "Testen der digitalen Ein/-Ausgänge - Konzept",
-    image("../assets/test_digital_inout.png")
+    drawio(path("../assets/drawIO/tests.drawio"), page: "digital_io_loopback")
 )
 
 /*
@@ -329,9 +331,10 @@ Der Loopback-Test aus dem vorherigen Kapitel prüft jede Leitung einzeln. Ein Ku
 
 Beim Walking-One-Test wird deshalb jeweils genau ein IO auf `HIGH` getrieben, während alle 32 IOs gelesen werden. Der getriebene Pegel "wandert" so nacheinander über alle IOs. Damit die nicht getriebenen Leitungen nicht floaten, wird bei allen IOs der Pull-Down-Widerstand eingeschaltet. Ohne Fehler liest nur der getriebene IO selbst `HIGH`, alle anderen IOs lesen `LOW`. Liest ein weiterer IO ebenfalls `HIGH`, ist er mit dem getriebenen IO kurzgeschlossen.
 
-#figure(caption: " Testen von Kurzschlüssen - Konzepts")[
-    #image("/assets/test_walking_one.png")
-]
+#figure(
+    caption: "Testen von Kurzschlüssen - Konzept",
+    drawio(path("../assets/drawIO/tests.drawio"), page: "walking_one")
+)
 
 
 
