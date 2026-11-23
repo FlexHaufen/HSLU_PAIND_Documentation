@@ -1,14 +1,13 @@
 
-
 #import "@preview/mannot:0.4.0": *
+#import "@preview/dashy-todo:0.1.3": todo
 
 
 = Software
 
-Die Software, mit dem Namen *pinpoint*, ist komplett in Python @ref_python geschrieben. 
-
-
-#pagebreak()
+Die Software, mit dem Namen *pinpoint*, ist komplett in Python @ref_python, als eine Kommandozeilenanwendung, geschrieben.
+Die Software führt alle Tests aus dem Kapitel Testszenarien automatisch nacheinander aus und gibt am Ende ein Testergebnis pro Brick aus.
+Die Software läuft dabei unter Linux und Windows.
 
 
 == Aufbau
@@ -24,8 +23,7 @@ brick.set_io_dir(IoBrick.Bank.A, 0, IoBrick.Direction.OUTPUT)   # Set IO A0 to O
 brick.set_io_level(IoBrick.Bank.A, 0, IoBrick.Level.HIGH)       # Set IO A0 to HIGH
 ```
 
-Der IO-Brick verfügt über Konfigurationsdaten und Metadaten welche beim erstellen
-
+Der IO-Brick #todo()[UML Diagramm IO-Brick klasse] verfügt über Konfigurationsdaten und Metadaten welche beim erstellen
 
 ==== Schnittstelle
 
