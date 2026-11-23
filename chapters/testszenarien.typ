@@ -530,7 +530,7 @@ In den ersten beiden Konfigurationen ist der Pull-Widerstand des Prüflings ausg
 
 ==== Spannungsbereiche
 
-Die gemessene Spannung $V$ wird bei einer Bankspannung von $V_"bank" = 3.3"V"$ einem der folgenden Bereiche zugeordnet:
+Die gemessene Spannung $U$ wird bei einer Bankspannung von $U_"bank" = 3.3"V"$ einem der folgenden Bereiche zugeordnet:
 
 #figure(
     caption: "Spannungsbereiche des Pull-Widerstandstests",
@@ -550,8 +550,8 @@ Für die Schienen `LOW` und `HIGH` wird eine Abweichung von $plus.minus 0.2"V"$ 
 Für den Bereich `MID` wird die Toleranz der Widerstände berücksichtigt. Im ungünstigsten Fall liegt ein Widerstand an der unteren und der andere an der oberen Toleranzgrenze:
 
 $
-  V_"MID" = V_"bank" dot R_"down" / (R_"up" + R_"down"), quad
-  (1 - 0.05) / 2 dot V_"bank" <= V_"MID" <= (1 + 0.05) / 2 dot V_"bank"
+  U_"MID" = U_"bank" dot R_"down" / (R_"up" + R_"down"), quad
+  (1 - 0.05) / 2 dot U_"bank" <= U_"MID" <= (1 + 0.05) / 2 dot U_"bank"
 $
 
 Zusätzlich wird eine Messtoleranz des @ADC von $plus.minus 0.1"V"$ zugelassen. Daraus ergibt sich der Bereich von $1.47"V"$ bis $1.83"V"$.
