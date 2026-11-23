@@ -318,7 +318,215 @@ Kurzschlüsse zwischen zwei IOs werden mit diesem Test nicht erkannt, da die üb
 
 == Testen der analogen Eingänge
 
-Die analogen ein
+=== Konzept
+
+Jeder IO des IO-Bricks kann neben dem digitalen Pegel auch die Spannung der Leitung über einen @ADC messen. Der Test der analogen Eingänge basiert auf dem digitalen Loopback-Test: Der Aufbau, der Ablauf und die Fehlerinterpretation sind gleich. Anstelle des digitalen Pegels wird jedoch die Spannung der Leitung gemessen und mit einem Sollwert verglichen.
+
+Wie beim digitalen Test wird jeder IO nacheinander von beiden Bricks getrieben. Der treibende Brick misst die Spannung an seinem eigenen Pin (Readback), der andere Brick misst dieselbe Leitung über die Baseplate (Remote). Pro IO entstehen so wieder die vier Messungen S1 bis S4.
+
+Eine Messung besteht aus zwei Pegeln: Wird die Leitung auf `HIGH` getrieben, muss die Spannung der Bankspannung $U_"bank"$ entsprechen, bei `LOW` muss sie $0"V"$ betragen. Eine Messung gilt als korrekt, wenn beide Spannungen höchstens $plus.minus 0.1"V"$ vom Sollwert abweichen.
+
+Damit der @ADC nicht nur an einem einzelnen Punkt geprüft wird, wird der Test bei den drei Bankspannungen $1.0"V"$, $2.0"V"$ und $3.3"V"$ durchgeführt. Da beide Bricks dieselbe Leitung teilen, wird die Bankspannung jeweils auf beiden Bricks gleich gesetzt. Zusammen mit dem Pegel `LOW` wird der Eingang damit an vier Punkten über den ganzen Messbereich geprüft.
+
+#pagebreak()
+
+==== Fehlerinterpretation
+
+Die Klassifizierung entspricht derjenigen des digitalen Tests. Da der digitale Loopback-Test zuvor bestanden wurde, sind Unterbrüche, Kurzschlüsse und defekte Ausgangstreiber bereits ausgeschlossen. Eine falsche Spannung auf der Leitung deutet deshalb nicht auf einen defekten Ausgang hin, sondern auf eine falsche Ausgangsspannung.
+
+#figure(
+    caption: "Fehlerinterpretation Analoge Eingänge",
+    table(
+        columns: (auto, 1fr, 1fr, 1fr, 1fr),
+        table.header(
+            [*Klassifizierung*], [*S1*\ IO-Brick 1 readback], [*S2*\ IO-Brick 2 remote], [*S3*\ IO-Brick 2 readback], [*S4*\ IO-Brick 1 remote]
+        ),
+        [Kein Fehler gefunden],
+        [#C],[#C],[#C],[#C],
+        [IO-Brick 1 defekter analoger Eingang],
+        [#X],[#C],[#C],[#X],
+        [IO-Brick 2 defekter analoger Eingang],
+        [#C],[#X],[#X],[#C],
+        [IO-Brick 1 Ausgangsspannung falsch],
+        [#X],[#X],[#C],[#C],
+        [IO-Brick 2 Ausgangsspannung falsch],
+        [#C],[#C],[#X],[#X],
+        [Falsche Leitungsspannung],
+        [#X],[#X],[#X],[#X],
+        [Mehrere Fehler],
+        table.cell(colspan: 4)[_Restliche Zustände_],
+    )
+)
+
+*Defekter analoger Eingang*: Der @ADC eines Bricks misst eine falsche Spannung, egal ob der Brick selbst treibt (Readback) oder empfängt (Remote). Der andere Brick misst in beiden Richtungen die korrekte Spannung, womit belegt ist, dass die Spannung auf der Leitung stimmt.
+
+*Ausgangsspannung falsch*: Treibt ein Brick, messen beide Bricks dieselbe falsche Spannung. In der Gegenrichtung stimmen beide Messungen, die analogen Eingänge beider Bricks sind also intakt. Ist die Spannung bei allen 16 IOs einer Bank falsch, liegt der Fehler nicht beim einzelnen Ausgang, sondern bei der Bankversorgung des treibenden Bricks. Diese Unterscheidung ist nur möglich, wenn zuerst alle IOs gemessen und danach gemeinsam ausgewertet werden.
+
+*Falsche Leitungsspannung*: Die Spannung ist falsch, unabhängig davon, welcher Brick treibt. Eine mögliche Ursache ist eine Last auf der Leitung, z.B. ein niederohmiger Pfad gegen GND, wie er bei einem IO-Brick an Pin B0 festgestellt wurde. Der Fehler lässt sich keinem Brick eindeutig zuordnen, eine weitere Diagnose ist nötig.
+
+*Restliche Zustände*: Im Unterschied zum digitalen Test werden die beiden Richtungen einzeln ausgewertet. Ein Zustand, der nicht in der Tabelle aufgeführt ist, ergibt deshalb nicht einen unklassifizierbaren Fehler, sondern es werden mehrere Fehler gemeldet, z.B. ein defekter analoger Eingang auf beiden Bricks.
+
+
+/*
+#pagebreak()
+
+==== Testdauer
+
+Es gelten dieselben Variablen wie beim digitalen Loopback-Test. Zusätzlich gelten die folgenden Variablen:
+
+#figure(
+    caption: "Zusätzliche Variablen zur Berechnung der Testdauer des analogen Tests",
+    table(
+        columns: (auto, 1fr, auto),
+        align: left,
+        table.header([*Symbol*], [*Bedeutung*], [*Wert*]),
+        [$V$], [Anzahl geprüfter Bankspannungen], [$3$],
+        [$t_"bank"$], [Wartezeit nach dem Setzen der Bankspannung (`BANK_VOLTAGE_SETTLE_TIME`)], [$200"ms"$],
+    )
+)
+
+*Vorbereitung:* Auf beiden Bricks werden alle IOs als Eingang konfiguriert ($N$ Zugriffe pro Brick).
+
+*Durchführung:* Pro Bankspannung wird auf beiden Bricks die Bankspannung gesetzt ($2K$ Zugriffe pro Brick). Danach folgt für jede Bankspannung derselbe Ablauf wie beim digitalen Test: Pro IO und Richtung wird der Ausgang vorbereitet (2 Zugriffe), pro Pegel folgen das Setzen des Pegels, das Readback und das Remote-Messen (3 Zugriffe) und zum Schluss wird der IO wieder als Eingang konfiguriert (1 Zugriff).
+
+*Abschluss:* Auf beiden Bricks werden alle IOs als Eingang konfiguriert und die Bankspannung wieder auf den Standardwert gesetzt ($N + 2K$ Zugriffe pro Brick).
+
+$
+  "SDO"_"total" &= underbrace(B N, "Vorbereitung") + underbrace(V (2 B K + N D (3 + 3L)), "Durchführung") + underbrace(B (N + 2K), "Abschluss") \
+  &= 64 + 1752 + 72 = 1888
+$
+
+Die gesamte Testdauer ergibt sich damit zu
+
+$
+  t_"total" &approx "SDO"_"total" dot t_"SDO" + V N D L dot t_"settle" + V dot t_"bank" \
+  &approx 1888 dot 1.12"ms" + 1920"ms" + 600"ms" \
+  &approx 4.63"s"
+$
+
+Der Test dauert damit rund dreimal so lange wie der digitale Loopback-Test, da derselbe Ablauf für jede der drei Bankspannungen wiederholt wird.
+
+#todo()[Gemessene Testdauer ergänzen]
+*/
+
+#pagebreak()
+
+
+=== Umsetzung
+
+Der Test ist in der Klasse ```py AnalogIoLoopbackTest``` umgesetzt. Er ist nicht als kritisch eingestuft: Ein fehlerhafter analoger Eingang wird im Bericht aufgeführt, die nachfolgenden Tests werden aber trotzdem ausgeführt. Der Test setzt voraus, dass der digitale Loopback-Test bestanden wurde. Leitungen, Ausgangstreiber und Verbindungen über die Baseplate sind damit bereits geprüft.
+
+Der Test benötigt die IO-Brick-Firmware ab Version V0.005. Bei älteren Versionen schaltet das Lesen von `Voltage Read` an einem Ausgang den Ausgangstreiber ab. Ein Readback wäre damit nicht möglich.
+
+==== Vorbereitung und Abschluss
+
+In der Vorbereitung (```py setup()```) werden auf beiden Bricks alle IOs als Eingang konfiguriert. Die Bankspannung wird erst in der Durchführung gesetzt, da sie für jeden Durchlauf ändert. Im Abschluss (```py teardown()```) werden alle IOs wieder als Eingang konfiguriert und die Bankspannung auf den Standardwert von 3.3 V zurückgesetzt. Damit laufen die nachfolgenden Tests wieder mit der Standard-Bankspannung.
+
+==== Treiben eines IOs
+
+Das Treiben eines IOs ist in der Methode ```py __drive()``` gleich umgesetzt wie beim digitalen Loopback-Test. Der Ausgangspegel wird vor dem Umschalten auf `LOW` vorgegeben, und der IO wird in einem `finally`-Block wieder als Eingang konfiguriert. Der einzige Unterschied ist, dass anstelle des digitalen Pegels (```py get_io()```) die Spannung gemessen wird (```py get_io_voltage()```).
+
+#figure(
+    kind: "Codeausschnitt",
+    supplement: [Codeausschnitt],
+    caption: "Treiben eines IOs und Messen der Spannung",
+    [
+```python
+for level in LEVELS:                    # (HIGH, LOW)
+    driver.set_io_level(bank, io, level)
+    time.sleep(IoBrick.IO_SETTLE_TIME)
+    readback.append(driver.get_io_voltage(bank, io))
+    remote.append(receiver.get_io_voltage(bank, io))
+```
+    ]
+)
+
+==== Messung
+
+Für jede Bankspannung wird diese zuerst auf beiden Bricks gesetzt. Anschliessend wird gewartet, bis sich die Bankspannung eingeschwungen hat (`BANK_VOLTAGE_SETTLE_TIME`). Ein Wechsel von $3.3"V"$ auf $1.0"V"$ dauert rund $100"ms"$.
+
+Danach werden zuerst alle 32 IOs in beiden Richtungen gemessen und jede Messung mit den Sollspannungen verglichen. Erst anschliessend wird ausgewertet, da ein Fehler der Bankversorgung nur erkannt werden kann, wenn die Ergebnisse aller IOs einer Bank bekannt sind.
+
+#figure(
+    kind: "Codeausschnitt",
+    supplement: [Codeausschnitt],
+    caption: "Messung aller IOs und Erkennung eines Fehlers der Bankversorgung",
+    [
+```python
+for brick in ctx.bricks:
+    brick.set_voltage(bank_voltage)
+time.sleep(IoBrick.BANK_VOLTAGE_SETTLE_TIME)
+expected = [bank_voltage if l == L.HIGH else 0.0 for l in LEVELS]
+
+samples = {(bank, io): [self.__drive(drv, rcv, bank, io) for drv, rcv in directions]
+           for bank, io in IoBrick.all_ios()}
+ok = {key: [tuple(self.__within_tolerance(s, expected) for s in pair)
+            for pair in per_dir]
+      for key, per_dir in samples.items()}
+
+# line voltage wrong (readback and remote) on all IOs of a bank
+bank_failed = {(bank, d): all(ok[(bank, io)][d] == (False, False)
+                              for io in range(IoBrick.NUMBER_OF_IOS_PER_BANK))
+               for bank in IoBrick.Bank for d in range(len(directions))}
+```
+    ]
+)
+
+#pagebreak()
+
+==== Klassifizierung
+
+Pro IO liegt für jede Richtung ein Paar aus Readback und Remote vor. Sind in beiden Richtungen alle Messungen korrekt, ist der IO fehlerfrei. Sind in beiden Richtungen alle Messungen falsch, wird eine falsche Leitungsspannung gemeldet. In allen anderen Fällen wird jede Richtung einzeln ausgewertet.
+
+#figure(
+    kind: "Codeausschnitt",
+    supplement: [Codeausschnitt],
+    caption: "Klassifizierung pro Richtung",
+    [
+```python
+faults = {}
+for d, ((driver, receiver), (readback_ok, remote_ok)) in enumerate(zip(directions, states)):
+    match (readback_ok, remote_ok):
+        case (True, True):
+            continue
+        case (True, False):
+            faults["Defective analog input on receiver"] = (receiver,)
+        case (False, True):
+            faults["Defective analog input on driver"] = (driver,)
+        case _ if bank_failed[(bank, d)]:
+            faults["Bank supply voltage of driver out of tolerance"] = (driver,)
+        case _:
+            faults["Output voltage of driver out of tolerance"] = (driver,)
+```
+    ]
+)
+
+Ein defekter analoger Eingang zeigt sich in beiden Richtungen, einmal als Empfänger (Remote falsch) und einmal als Treiber (Readback falsch). Da beide Richtungen dieselbe Meldung erzeugen, werden die Fehler in einem Dictionary gesammelt. Dadurch wird derselbe Fehler nur einmal im Bericht aufgeführt.
+
+Im Bericht werden für jede Messung neben dem Ergebnis auch die Sollspannungen und die in beiden Richtungen gemessenen Spannungen ausgegeben.
+
+#figure(
+    caption: "Ergebnisse des analogen Loopback-Tests",
+    table(
+        columns: (auto, 1fr, auto),
+        align: left,
+        table.header([*Ergebnis*], [*Bedeutung*], [*Betroffener Brick*]),
+        [`PASSED`], [Alle Spannungen liegen in der Toleranz], [-],
+        [`FAILED`], [Defekter analoger Eingang], [Messender Brick],
+        [`FAILED`], [Ausgangsspannung ausserhalb der Toleranz], [Treibender Brick],
+        [`FAILED`], [Bankversorgung ausserhalb der Toleranz], [Treibender Brick],
+        [`FAILED`], [Falsche Leitungsspannung in beiden Richtungen, weitere Diagnose nötig], [Beide],
+    )
+)
+
+
+==== Einschränkungen
+
+Der @ADC wird nur an den Punkten $0"V"$ und $U_"bank"$ geprüft. Spannungen zwischen $0"V"$ und $U_"bank"$ können mit einem getriebenen Ausgang nicht erzeugt werden. Ein Fehler, der nur in diesem Bereich auftritt (z.B. eine Nichtlinearität des @ADC), wird deshalb nur über die drei verschiedenen Bankspannungen teilweise erkannt.
+
+Ein Unterbruch zeigt sich im Muster S1 #C, S2 #X, S3 #C, S4 #X. Da die beiden Richtungen einzeln ausgewertet werden, wird dieser Fehler als defekter analoger Eingang auf beiden Bricks gemeldet (siehe @anhang-fehleranalyse). Ein Unterbruch sollte allerdings bereits durch den vorangehenden digitalen Loopback-Test erkannt werden.
+
+Ist ein @ADC\-Kanal einem falschen IO zugeordnet (vertauschter Kanal), misst der Brick bei diesem IO eine falsche Spannung. Der Fehler wird als defekter analoger Eingang gemeldet, aber nicht als Vertauschung erkannt.
 
 
 #pagebreak()
