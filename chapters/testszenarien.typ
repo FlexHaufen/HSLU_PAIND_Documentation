@@ -37,7 +37,7 @@ Wird ein Test welche als kritisch eingestuft unterbricht den Testdurchlauf sobal
 #pagebreak()
 
 == Testen der Kommunikation
-Damit die einzelnen Funktionen des IO-Bricks getestet werden können, muss zuerst die Kommunikation über CANopen überprüft werden.
+Damit die einzelnen Funktionen des IO-Bricks getestet werden können, muss zuerst die Kommunikation mit dem IO-Brick über CANopen überprüft werden.
 
 === Konzept
 
@@ -185,6 +185,8 @@ Die Tabelle unten zeigt die Klassifizierung der einzelnen Zustände auf.
 
 ==== Testdauer
 
+#todo()[Ergänzen]
+/*
 Die Dauer des Tests wird durch die Anzahl der @SDO\-Zugriffe und durch die Wartezeiten nach jedem Pegelwechsel bestimmt. Jeder @SDO\-Zugriff ist ein Roundtrip über den CAN-Bus (Anfrage und Antwort) mit der Dauer $t_"SDO"$.
 
 #figure(
@@ -225,7 +227,7 @@ $
 
 Die gemessene Testdauer von $1.449 "s"$ stimmt gut mit dieser Abschätzung überein.
 
-
+*/
 
 #pagebreak()
 
@@ -236,7 +238,7 @@ Der Test ist in der Klasse ```py DigitalIoLoopbackTest``` umgesetzt. In der Soft
 
 ==== Vorbereitung und Abschluss
 
-In der Vorbereitung (```py setup()```) wird auf beiden Bricks die Bankspannung auf den Standardwert von 3.3 V gesetzt und alle IOs als Eingang konfiguriert. Damit startet der Test aus einem sicheren Zustand, in dem kein IO treibt. Im Abschluss (```py teardown()```) werden alle IOs wieder als Eingang konfiguriert. Der Abschluss wird vom Testrunner auch dann ausgeführt, wenn der Test mit einer Exception abbricht.
+In der Vorbereitung (```py setup()```) wird auf beiden Bricks die Bankspannung auf den Standardwert von 3.3V gesetzt und alle IOs als Eingang konfiguriert. Damit startet der Test aus einem sicheren Zustand, in dem kein IO treibt. Im Abschluss (```py teardown()```) werden alle IOs wieder als Eingang konfiguriert. Der Abschluss wird vom Testrunner auch dann ausgeführt, wenn der Test mit einer Exception abbricht.
 
 ==== Treiben eines IOs
 
@@ -324,7 +326,7 @@ Jeder IO des IO-Bricks kann neben dem digitalen Pegel auch die Spannung der Leit
 
 Wie beim digitalen Test wird jeder IO nacheinander von beiden Bricks getrieben. Der treibende Brick misst die Spannung an seinem eigenen Pin (Readback), der andere Brick misst dieselbe Leitung über die Baseplate (Remote). Pro IO entstehen so wieder die vier Messungen S1 bis S4.
 
-Eine Messung besteht aus zwei Pegeln: Wird die Leitung auf `HIGH` getrieben, muss die Spannung der Bankspannung $U_"bank"$ entsprechen, bei `LOW` muss sie $0"V"$ betragen. Eine Messung gilt als korrekt, wenn beide Spannungen höchstens $plus.minus 0.1"V"$ vom Sollwert abweichen.
+Eine Messung besteht aus zwei Pegeln: Wird die Leitung auf `HIGH` getrieben, muss die Spannung der Bankspannung $U_"bank"$ entsprechen, bei `LOW` muss sie $0"V"$ betragen. Eine Messung gilt als korrekt, wenn beide Spannungen höchstens $plus.minus 0.1"V"$ #todo()[Toleranz konfigurierbar machen] vom Sollwert abweichen.
 
 Damit der @ADC nicht nur an einem einzelnen Punkt geprüft wird, wird der Test bei den drei Bankspannungen $1.0"V"$, $2.0"V"$ und $3.3"V"$ durchgeführt. Da beide Bricks dieselbe Leitung teilen, wird die Bankspannung jeweils auf beiden Bricks gleich gesetzt. Zusammen mit dem Pegel `LOW` wird der Eingang damit an vier Punkten über den ganzen Messbereich geprüft.
 
@@ -362,7 +364,7 @@ Die Klassifizierung entspricht derjenigen des digitalen Tests. Da der digitale L
 
 *Ausgangsspannung falsch*: Treibt ein Brick, messen beide Bricks dieselbe falsche Spannung. In der Gegenrichtung stimmen beide Messungen, die analogen Eingänge beider Bricks sind also intakt. Ist die Spannung bei allen 16 IOs einer Bank falsch, liegt der Fehler nicht beim einzelnen Ausgang, sondern bei der Bankversorgung des treibenden Bricks. Diese Unterscheidung ist nur möglich, wenn zuerst alle IOs gemessen und danach gemeinsam ausgewertet werden.
 
-*Falsche Leitungsspannung*: Die Spannung ist falsch, unabhängig davon, welcher Brick treibt. Eine mögliche Ursache ist eine Last auf der Leitung, z.B. ein niederohmiger Pfad gegen GND, wie er bei einem IO-Brick an Pin B0 festgestellt wurde. Der Fehler lässt sich keinem Brick eindeutig zuordnen, eine weitere Diagnose ist nötig.
+*Falsche Leitungsspannung*: Die Spannung ist falsch, unabhängig davon, welcher Brick treibt. Eine mögliche Ursache ist eine Last auf der Leitung, z.B. ein niederohmiger Pfad gegen GND. Der Fehler lässt sich keinem Brick eindeutig zuordnen, eine weitere Diagnose ist nötig.
 
 *Restliche Zustände*: Im Unterschied zum digitalen Test werden die beiden Richtungen einzeln ausgewertet. Ein Zustand, der nicht in der Tabelle aufgeführt ist, ergibt deshalb nicht einen unklassifizierbaren Fehler, sondern es werden mehrere Fehler gemeldet, z.B. ein defekter analoger Eingang auf beiden Bricks.
 
@@ -440,6 +442,8 @@ for level in LEVELS:                    # (HIGH, LOW)
 ```
     ]
 )
+
+#pagebreak()
 
 ==== Messung
 
@@ -533,6 +537,8 @@ Ist ein @ADC\-Kanal einem falschen IO zugeordnet (vertauschter Kanal), misst der
 
 == Testen von Kurzschlüssen zwischen IOs (Walking One)
 
+#todo()[Pullup test before walking one?]
+
 === Konzept
 
 Der Loopback-Test aus dem vorherigen Kapitel prüft jede Leitung einzeln. Ein Kurzschluss zwischen zwei IOs, z.B. eine Lötbrücke zwischen zwei benachbarten Pins, wird dabei nicht erkannt: Die übrigen Leitungen werden während der Messung nicht getrieben und deshalb auch nicht ausgewertet.
@@ -547,28 +553,6 @@ Beim Walking-One-Test wird deshalb jeweils genau ein IO auf `HIGH` getrieben, w�
 
 
 Es ist immer nur ein Ausgang aktiv. Bei einem Kurzschluss zieht der Ausgang nur einen Eingang mit Pull-Down auf `HIGH`, es treiben also nie zwei Ausgänge gegeneinander. Geprüft werden alle 32 IOs gegeneinander, also auch Kurzschlüsse zwischen Bank A und Bank B.
-
-#figure(
-    kind: "Codeausschnitt",
-    supplement: [Codeausschnitt],
-    caption: "Pseudocode Walking-One-Test",
-    [
-```
-Step 0 - Safe state
-    IO-Brick 1, IO-Brick 2: all IOs → INPUT, PULL_DOWN
-
-Step 1 - Walk over all IOs of the device under test (IO-Brick 2)
-    for X in (A0 ... A15, B0 ... B15):
-        IO-Brick 2: X → OUTPUT, HIGH
-        wait (settle time)
-        levels = IO-Brick 2.get_inputs()      # all 32 IOs
-        IO-Brick 2: X → LOW, INPUT
-        for Y in all IOs except X:
-            if levels[Y] == HIGH:
-                short between X and Y
-```
-    ]
-)
 
 Da die IOs der beiden Bricks über die Baseplate 1:1 verbunden sind, sieht ein Kurzschluss elektrisch gleich aus, egal ob er sich auf dem Tester, dem Prüfling oder der Baseplate befindet. Der Tester ist ein bekannt funktionierender Brick und die Baseplate wird als fehlerfrei angenommen. Ein gefundener Kurzschluss wird deshalb dem Prüfling zugeordnet. Der Tester wird nur als Eingang mit Pull-Down konfiguriert und treibt während des ganzen Tests nie. Da der Test ausschliesslich mit dem Prüfling arbeitet, könnte er auch ohne eingesteckten Tester durchgeführt werden.
 
@@ -585,7 +569,9 @@ IO-Kombinationen geprüft. Jeder Kurzschluss wird dabei zweimal gesehen, einmal 
 
 
 ==== Testdauer
+#todo()[Ergänzen]
 
+/*
 Würde jeder IO einzeln über `Read Input 1 Bit` gelesen, wären pro getriebenem IO $N = 32$ Lesezugriffe nötig. Das Objekt `Read Input 8 Bit` liefert dagegen die Pegel von 8 IOs mit einem einzigen @SDO\-Zugriff. Damit lassen sich alle 32 IOs eines Bricks mit $G = N / 8 = 4$ Zugriffen lesen.
 
 Es gelten dieselben Variablen wie beim digitalen Loopback-Test. Zusätzlich ist $G = 4$ die Anzahl Zugriffe, um alle IOs eines Bricks zu lesen.
@@ -609,7 +595,7 @@ $
 Mit Einzelzugriffen über `Read Input 1 Bit` wären es in der Durchführung $N (5 + N) = 1184$ statt $288$ Zugriffe. Die Testdauer würde damit auf rund $1.78"s"$ steigen.
 
 Die gemessene Testdauer von $0.854"s"$ stimmt gut mit dieser Abschätzung überein.
-
+*/
 #pagebreak()
 
 
@@ -675,7 +661,7 @@ for driven, shorted in followers.items():
     ]
 )
 
-Ein Kurzschluss zwischen X und Y wird normalerweise zweimal gefunden: Wenn X getrieben wird, liest Y `HIGH`, und umgekehrt. Damit derselbe Kurzschluss nicht zweimal im Bericht erscheint, wird jedes IO-Paar als ungeordnete Menge (```py frozenset```) gespeichert und nur einmal gemeldet.
+Ein Kurzschluss zwischen X und Y wird normalerweise zweimal gefunden: Wenn X getrieben wird, liest Y `HIGH`, und umgekehrt. Damit derselbe Kurzschluss nicht zweimal im Bericht erscheint, wird jedes IO-Paar als ungeordnete Menge (```py frozenset```) #todo()[Change to dict, like analog test] gespeichert und nur einmal gemeldet.
 
 Zusätzlich wird festgehalten, ob der Kurzschluss in beiden Richtungen oder nur in einer Richtung aufgetreten ist. Ein satter Kurzschluss (z.B. eine Lötbrücke) zeigt sich immer in beiden Richtungen. Tritt er nur in einer Richtung auf, deutet das auf einen anderen Fehler hin, z.B. auf einen hochohmigen Kurzschluss in der Nähe der Schaltschwelle oder einen fehlerhaften Eingang. Eine weitere Diagnose ist in diesem Fall nötig.
 
@@ -694,7 +680,6 @@ Zusätzlich wird festgehalten, ob der Kurzschluss in beiden Richtungen oder nur 
 
 ==== Einschränkungen
 
-Der Test ist auf funktionierende Pull-Down-Widerstände angewiesen. Fehlt der Pull-Down eines IOs, floatet dieser Eingang und kann zufällig `HIGH` lesen. Das würde fälschlicherweise als Kurzschluss gemeldet. Die Pull-Widerstände werden erst im nachfolgenden Kapitel getestet.
 
 Erkannt werden nur Kurzschlüsse, die den Eingang über die Schaltschwelle ziehen. Ein hochohmiger Kurzschluss bildet zusammen mit den parallel geschalteten Pull-Down-Widerständen von Tester und Prüfling einen Spannungsteiler. Liegt die Spannung am betroffenen IO unter der Schaltschwelle, wird der Kurzschluss nicht erkannt.
 
@@ -908,5 +893,3 @@ Pro IO werden vier Konfigurationen geprüft, insgesamt also $4 dot 32 = 128$ Mes
 Der Wert der Widerstände wird nicht absolut gemessen, sondern nur das Verhältnis von Pull-Up zu Pull-Down. Weichen beide Widerstände in die gleiche Richtung ab, bleibt das Verhältnis gleich und der Fehler wird nicht erkannt.
 
 Geprüft wird nur bei einer Bankspannung von $3.3"V"$. Ob die Pull-Widerstände auch bei anderen Bankspannungen korrekt arbeiten, wird nicht geprüft.
-
-Der vorangehende Walking-One-Test ist auf funktionierende Pull-Down-Widerstände angewiesen. Meldet der Walking-One-Test einen Kurzschluss und dieser Test gleichzeitig einen fehlenden Pull-Down am selben IO, ist der gemeldete Kurzschluss vermutlich eine Folge des fehlenden Pull-Downs.

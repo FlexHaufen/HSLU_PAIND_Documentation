@@ -12,6 +12,9 @@ Die Software läuft dabei unter Linux und Windows.
 
 == Aufbau
 
+#todo()[Finales SysMl Diagramm einfügen]
+
+
 === Hardware Abstraktion
 
 Der IO-Brick wird in der Software als einzelne Klasse ```py class IoBrick``` dargestellt. Diese verfügt über Methoden um die Funktionen des IO-Bricks zu verwenden.
@@ -50,8 +53,7 @@ Das unten dargestellte Sequenzdiagramm stellt den Ablauf der Software dar.
 
 == Testergebnis
 
-#let u(color, body) = { underline(stroke: 2pt+color, offset: 3pt)[#body] }
-
+Die Testergebnisse können auf der Konsole ausgegeben werden oder in Dateien abgespeichert werden.
 
 
 === Datei

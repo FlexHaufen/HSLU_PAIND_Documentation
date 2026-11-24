@@ -141,13 +141,7 @@ Status: #ok (Test implementiert), #plan (Work In Progress), #open (Test nicht im
         [Verstärkungs- oder Offsetfehler],
         [Messwerte um einen Faktor falsch],
         [Analoger Loopback-Test: Messpunkte 0 V und V#sub[Bank] bei 1.0 V, 2.0 V und 3.3 V, absoluter Vergleich (±0.1 V) und Vergleich mit dem ADC des Testers],
-        [#ok],
-
-        [F3], [ADC-Mapping],
-        [Kanäle vertauscht],
-        [Falscher Kanal reagiert],
-        [Analoge Messung parallel zu D7 auswerten. Aktuell fällt ein vertauschter Kanal im analogen Loopback-Test als defekter analoger Eingang auf, wird aber nicht als "vertauscht" klassifiziert],
-        [#open]
+        [#ok]
     )
 )
 ]
