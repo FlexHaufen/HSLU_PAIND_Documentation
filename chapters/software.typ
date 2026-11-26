@@ -10,6 +10,14 @@ Die Software führt alle Tests aus dem Kapitel Testszenarien automatisch nachein
 Die Software läuft dabei unter Linux und Windows.
 
 
+== Konzept
+
+#todo()[
+    Beschreiben der Software (was wurde sich dabei gedacht)
+    Verbinden mit den Anforderungen 
+]
+
+
 == Aufbau
 
 #todo()[Finales SysMl Diagramm einfügen]

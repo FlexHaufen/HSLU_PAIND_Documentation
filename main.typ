@@ -44,6 +44,14 @@
 #include "chapters/testszenarien.typ"
 #pagebreak()
 
+
+// TODO:    verifikation & validierung
+//          - überprüfen des usecase
+// TODO:    herausvorderung während der arbeit
+//          - fehler welche gefunden worden sind in der firmware          
+
+
+
 #include "chapters/fazit.typ"
 #pagebreak()
 
